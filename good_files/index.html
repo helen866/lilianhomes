@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!-- saved from url=(0071)https://s0.2mdn.net/dfp/288077/28619957/1759960377680/728x90/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript">
+    
+  (function() {
+    var MAX_URL_PARAM_LENGTH = 34;
+    var CLICK_X_URL_KEY = 'nx';
+    var CLICK_Y_URL_KEY = 'ny';
+    var CREATIVE_DIMENSIONS_KEY = 'dim';
+    var AD_URL_PARAM = '&adurl=';
+
+    var relegateNavigation = '';
+    var urlParamMap = {};
+
+    urlParamMap[CLICK_X_URL_KEY] = null;
+    urlParamMap[CLICK_Y_URL_KEY] = null;
+    urlParamMap[CREATIVE_DIMENSIONS_KEY] = null;
+
+    var handleClickTagMessage = function(e) {
+      try {
+        var eventData = JSON.parse(e.data);
+      } catch (err) {
+        return;
+      }
+      if (eventData.isInitClickTag) {
+        if (eventData.clickTags) {
+          for (var i = 0; i < eventData.clickTags.length; i++) {
+            var clkTag = eventData.clickTags[i];
+            window[clkTag.name] = clkTag.url;
+          }
+        } else if (eventData.clickTag) {
+          window.clickTag = eventData.clickTag;
+        }
+        relegateNavigation = eventData.relegateNavigation;
+      }
+    };
+
+    var storeClickCoordinates = function(e) {
+      urlParamMap[CLICK_X_URL_KEY] = Math.round(e.clientX);
+      urlParamMap[CLICK_Y_URL_KEY] = Math.round(e.clientY);
+    };
+
+    var getCreativeDimensions = function() {
+      return window.innerWidth + 'x' + window.innerHeight;
+    }
+
+    var getExitClickParams = function(e) {
+      urlParamMap[CREATIVE_DIMENSIONS_KEY] = getCreativeDimensions();
+
+      var exitParams = '';
+      for (var key in urlParamMap) {
+        exitParams += '&' + key + '=';
+        if (urlParamMap[key] !== null) {
+          exitParams += urlParamMap[key];
+        }
+      }
+      return exitParams;
+    }
+
+    var appendExitClickParams = function(url) {
+      var adUrlIndex = url.toLowerCase().indexOf(AD_URL_PARAM);
+      var paramsToBeAdded = getExitClickParams();
+      if (adUrlIndex > -1 && paramsToBeAdded.length <= MAX_URL_PARAM_LENGTH) {
+        url = url.substr(0, adUrlIndex) + paramsToBeAdded +
+          url.substr(adUrlIndex);
+      };
+      return url;
+    };
+
+    if (open.call) {
+      window.open = function(open) {
+        return function(url, name, features) {
+          url = appendExitClickParams(url);
+          if (relegateNavigation === 'parent') {
+            var message = {'clickTag': url, 'isPostClickTag': true};
+            parent.postMessage(JSON.stringify(message), '*');
+          } else {
+            var args = [url, name];
+            if (features) {
+              args.push(features);
+            }
+            open.apply(window, args);
+          }
+        };
+      }(window.open);
+    }
+
+    if (window.addEventListener) {
+      window.addEventListener(
+          'message', handleClickTagMessage, false);
+      window.addEventListener('mousedown', storeClickCoordinates, true);
+    } else {
+      window.attachEvent('onmessage', handleClickTagMessage);
+    }
+  })();
+    
+  </script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ad.size" content="width=728,height=90">
+        
+    <title>Just search it how you’d say it - realtor.com®</title>
+  
+    <link href="./css2" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+
+    <script type="text/javascript">
+    var clickTag = 'https://www.realtor.com/';
+    document.addEventListener('click', () => window.open(clickTag));
+    </script>
+
+</head>
+
+<body>
+
+
+<!-- #outer -->
+<main id="outer" class="search-results finished">
+
+    <div class="initial content">
+        <div class="start">
+            <h1 class="heading">Just search it how you’d say it</h1>
+        </div>
+
+        <div class="search-cards glow active">
+            <div class="card one">
+                <p class="search-text animating">A big barn with a bigger view and plenty of room for visitors</p>
+                <img class="search-button press" src="./search-button.png" alt="">
+            </div>
+            <div class="card two active">
+                <div class="listing">
+                    <div class="image">
+                        <img class="image" src="./house.jpg" alt="">
+                        <span class="heart filled">
+                            <svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path class="fill" d="M21.6919 32.0092C20.367 32.9012 18.6347 32.9012 17.3098 32.0092C10.6265 27.5094 5.57227 22.3681 5.57227 16.1405C5.57227 11.8418 9.03673 8.35693 13.3104 8.35693C15.8416 8.35693 18.0891 9.5795 19.5008 11.4696C20.9126 9.5795 23.16 8.35693 25.6913 8.35693C29.9649 8.35693 33.4294 11.8418 33.4294 16.1405C33.4294 22.3681 28.3752 27.5094 21.6919 32.0092Z" fill="#D92228"></path>
+                                <path class="outline" fill-rule="evenodd" clip-rule="evenodd" d="M1.39258 16.1409C1.39258 9.5575 6.70478 4.17871 13.3092 4.17871C15.5788 4.17871 17.698 4.81682 19.4997 5.91837C21.3014 4.81683 23.4206 4.17871 25.6902 4.17871C32.2947 4.17871 37.6069 9.5575 37.6069 16.1409C37.6069 24.7181 30.7291 30.9615 24.0245 35.4757C21.2888 37.3176 17.7107 37.3176 14.9749 35.4757C8.2703 30.9615 1.39258 24.7181 1.39258 16.1409ZM22.807 8.91553C21.4848 9.44987 20.3431 10.3408 19.4997 11.47C18.6563 10.3408 17.5147 9.44987 16.1924 8.91553C15.3014 8.55544 14.3283 8.35728 13.3092 8.35728C9.03561 8.35728 5.57115 11.8421 5.57115 16.1409C5.57115 22.3685 10.6254 27.5098 17.3086 32.0095C18.6335 32.9016 20.3659 32.9016 21.6908 32.0095C28.3741 27.5098 33.4283 22.3685 33.4283 16.1409C33.4283 11.8421 29.9638 8.35728 25.6902 8.35728C24.6711 8.35728 23.6981 8.55544 22.807 8.91553Z" fill="white"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <span class="status">For sale</span>
+                    <span class="price">$1,425,000</span>
+                </div>
+                <div class="listing">
+                    <div class="image">
+                        <img class="image" src="./house2.jpg" alt="">
+                    </div>
+                    <span class="status">For sale</span>
+                    <span class="price">$1,250,000</span>
+                </div>
+                <div class="listing">
+                    <div class="image">
+                        <img class="image" src="./house3.jpg" alt="">
+                    </div>
+                    <span class="status">For sale</span>
+                    <span class="price">$1,225,500</span>
+                </div>
+                <div class="listing">
+                    <div class="image">
+                        <img class="image" src="./house4.jpg" alt="">
+                    </div>
+                    <span class="status">For sale</span>
+                    <span class="price">$1,500,000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="end content active">
+        <p class="desc">Find your dream home faster by <strong>searching how you’d say it</strong> to a friend.</p>
+        <p class="cta-row"><span class="button">Try it now</span></p>
+    </div>
+
+    <img class="logo" src="./logo.svg" alt="realtor.com">
+    <p class="disclaimer"><span class="for-search">Consult a real estate professional to verify listing details.</span> <span class="for-photo">Credit: Robby Klein Photography</span></p>
+
+</main>
+<!-- / #outer -->
+
+
+
+<script type="text/javascript">
+const start = document.querySelector('.start');
+const searchCards = document.querySelector('.search-cards');
+const searchText = document.querySelector('.search-text');
+const button = document.querySelector('.search-button');
+const searchInput = searchText.innerText;
+
+setTimeout(function() {
+    start.classList.remove('active');
+    searchCards.classList.add('active');
+    setTimeout(animate_search_text, 750);
+}, 1800);
+
+var length = 0;
+function animate_search_text() {
+    searchText.classList.add('animating');
+    if (searchInput.length == length) {
+        setTimeout(animate_search_submit, 200);
+        return;
+    }
+    searchText.textContent = searchInput.slice(0, ++length);
+    setTimeout(animate_search_text, 60);
+}
+
+function animate_search_submit() {
+    button.classList.add('press');
+    setTimeout(function() {
+        document.querySelector('.card.one').classList.remove('active');
+        document.querySelector('.card.two').classList.add('active');
+        document.querySelector('#outer').classList.add('search-results');
+    }, 600);
+    setTimeout(function() {
+        document.querySelector('.heart').classList.add('filled');
+    }, 1200);
+    setTimeout(the_end, 3000);
+}
+
+function the_end() {
+    document.querySelector('.initial.content').classList.remove('active');
+    document.querySelector('.end.content').classList.add('active');
+    document.querySelector('#outer').classList.add('finished');
+}
+
+</script>
+
+
+
+
+</body></html>
